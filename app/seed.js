@@ -1,14 +1,14 @@
 var fs = require('fs');
 var bip39 = require('bip39');
 var bitcoin = require('bitcoinjs-lib');
-var request = require('request');
 var addressesToSearch = [
-    "3CcxyPhyvyc3S9UuPfu42GNZLvVVV11Uk8"
+    "3CcxyPhyvyc3S9UuPfu42GNZLvVVV11Uk8",
+    "3A1ieb5sqeDTmKhiSt2W955hxugz8JuTf2"
 ];
 var input = JSON.parse(fs.readFileSync('./app/SeedInput.json', 'utf8'));
+var results = [];
 
 function genSeeds() {
-    var results = [];
     var seedArray = [];
 
     // Currently only 12 words
@@ -36,7 +36,7 @@ function genSeeds() {
                                                 seedArray[10] = input[s];
                                                 for (var t = 0; t < input.length; t++) {
                                                     seedArray[11] = input[t];
-                                                    validateWords(seedArray, results);
+                                                    validateWords(seedArray);
                                                 }
                                             }
                                         }
@@ -54,20 +54,19 @@ function genSeeds() {
     }
 }
 
-function validateWords(words, results) {
+function validateWords(words) {
     var seed = words[0];
 
-    for (var i = 1; i < 12; i++) {
+    for (var i = 1; i < words.length; i++) {
         seed += " " + words[i];
     }
 
     // Clues should come here
-    if (bip39.validateMnemonic(seed, input)) {
-
+    if (bip39.validateMnemonic(seed)) {
         var bitcoinNetwork = bitcoin.networks.bitcoin;
         var hdMaster = bitcoin.HDNode.fromSeedBuffer(bip39.mnemonicToSeed(seed), bitcoinNetwork); // seed from above
 
-        var key1 = hdMaster.derivePath("m/0'/0/0");
+        var key1 = hdMaster.derivePath("m/49'/0'/0'/0/0"); // BIP49
         var addrWIF = key1.keyPair.toWIF();
         var keyPair = bitcoin.ECPair.fromWIF(addrWIF);
         var pubKey = keyPair.getPublicKeyBuffer();
