@@ -10,6 +10,8 @@ function genSeeds() {
     var testString = "";
     var lastWord = "";
     var totalSeeds = 0;
+
+    // Currently only 12 words
     for (var i = 0; i < input.length; i++) {
         teststringarray[0] = input[i];
         for (var j = 0; j < input.length; j++) {
@@ -34,46 +36,45 @@ function genSeeds() {
                                                 teststringarray[10] = input[s];
                                                 for (var t = 0; t < input.length; t++) {
                                                     teststringarray[11] = input[t];
-                                                    testString = teststringarray[0];
-                                                    for (var u = 1; u < 12; u++) {
-                                                        testString += " " + teststringarray[u];
-                                                    }
-                                                    if (bip39.validateMnemonic(testString, input)) {
-                                                        results.push(testString);
-
-                                                        var bitcoinNetwork = bitcoin.networks.bitcoin;
-                                                        var hdMaster = bitcoin.HDNode.fromSeedBuffer(bip39.mnemonicToSeed(testString), bitcoinNetwork); // seed from above
-
-                                                        var key1 = hdMaster.derivePath('0');
-                                                        var addr = key1.keyPair.toWIF();
-                                                        console.log(addr);
-
-                                                        // https.get('https://blockchain.info/q/addressfirstseen/' + addr, (res) => {
-                                                        //     console.log(res);
-                                                        // });
-                                                        // console.log("\n\nfound seed: " + testString);
-                                                    }
-                                                    testString = "";
+                                                    validateWords(input, teststringarray, results);
                                                 }
                                             }
                                         }
                                     }
-
-                                    console.log("\nTotal: " + totalSeeds);
                                 }
                             }
                         }
                     }
                 }
-                console.log("\n\ncurrent: " + results);
             }
-            console.log("\n\ncurrent: " + results);
             fs.writeFile('output_' + i + '.json', JSON.stringify(results), 'utf8', (err) => {
                 console.log(err);
             });
         }
-        testString = "";
-        if (i === input.length - 12) break;
     }
 }
+
+function validateWords(input, words, results) {
+    var testString = words[0];
+    for (var i = 1; i < 12; i++) {
+        testString += " " + words[i];
+    }
+    if (bip39.validateMnemonic(testString, input)) {
+        results.push(testString);
+        var bitcoinNetwork = bitcoin.networks.bitcoin;
+        var hdMaster = bitcoin.HDNode.fromSeedBuffer(bip39.mnemonicToSeed(testString), bitcoinNetwork); // seed from above
+
+        var key1 = hdMaster.derivePath('0');
+        var addr = key1.keyPair.toWIF();
+        console.log(addr);
+
+        // check if there's anything on the first address of the seed
+
+        // https.get('https://blockchain.info/q/addressfirstseen/' + addr, (res) => {
+        //     console.log(res);
+        // });
+        // console.log("\n\nfound seed: " + testString);
+    }
+}
+
 module.exports.genSeeds = genSeeds;
