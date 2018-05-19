@@ -54,7 +54,7 @@ function genSeeds() {
     }
 }
 
-function validateWords(words) {
+async function validateWords(words) {
     var seed = words[0];
 
     for (var i = 1; i < words.length; i++) {
@@ -65,19 +65,21 @@ function validateWords(words) {
     if (bip39.validateMnemonic(seed)) {
         var bitcoinNetwork = bitcoin.networks.bitcoin;
         var hdMaster = bitcoin.HDNode.fromSeedBuffer(bip39.mnemonicToSeed(seed), bitcoinNetwork); // seed from above
+        
+        for(var j = 0; j < 25; j++) {
+            var key1 = hdMaster.derivePath("m/49'/0'/0'/0/" + j); // BIP49
+            var addrWIF = key1.keyPair.toWIF();
+            var keyPair = bitcoin.ECPair.fromWIF(addrWIF);
+            var pubKey = keyPair.getPublicKeyBuffer();
 
-        var key1 = hdMaster.derivePath("m/49'/0'/0'/0/0"); // BIP49
-        var addrWIF = key1.keyPair.toWIF();
-        var keyPair = bitcoin.ECPair.fromWIF(addrWIF);
-        var pubKey = keyPair.getPublicKeyBuffer();
-
-        var redeemScript = bitcoin.script.witnessPubKeyHash.output.encode(bitcoin.crypto.hash160(pubKey));
-        var scriptPubKey = bitcoin.script.scriptHash.output.encode(bitcoin.crypto.hash160(redeemScript));
-        var address = bitcoin.address.fromOutputScript(scriptPubKey);
-        // console.log(address);
-        if (addressesToSearch.includes(address)) {
-            console.log("Found a seed for address: " + address + " Seed: " + seed);
-            results.push(seed);
+            var redeemScript = bitcoin.script.witnessPubKeyHash.output.encode(bitcoin.crypto.hash160(pubKey));
+            var scriptPubKey = bitcoin.script.scriptHash.output.encode(bitcoin.crypto.hash160(redeemScript));
+            var address = bitcoin.address.fromOutputScript(scriptPubKey);
+            // console.log(address);
+            if (addressesToSearch.includes(address)) {
+                console.log("Found a seed for address: " + address + " Seed: " + seed);
+                results.push(seed);
+            }
         }
     }
 }
