@@ -4,7 +4,7 @@ var bitcoin = require('bitcoinjs-lib');
 const https = require('https');
 
 function genSeeds() {
-    var input = JSON.parse(fs.readFileSync('./app/output.json', 'utf8'));
+    var input = JSON.parse(fs.readFileSync('./app/SeedInput.json', 'utf8'));
     var results = [];
     var teststringarray = [];
     var testString = "";
