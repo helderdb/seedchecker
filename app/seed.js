@@ -14,27 +14,27 @@ function genSeeds() {
     // Currently only 12 words
     for (var i = 0; i < input.length; i++) {
         seedArray[0] = input[i];
-        for (var j = 0; j < input.length; j++) {
+        for (var j = 1; j < input.length; j++) {
             seedArray[1] = input[j];
-            for (var k = 0; k < input.length; k++) {
+            for (var k = 2; k < input.length; k++) {
                 seedArray[2] = input[k];
-                for (var l = 0; l < input.length; l++) {
+                for (var l = 3; l < input.length; l++) {
                     seedArray[3] = input[l];
-                    for (var m = 0; m < input.length; m++) {
+                    for (var m = 4; m < input.length; m++) {
                         seedArray[4] = input[m];
-                        for (var n = 0; n < input.length; n++) {
+                        for (var n = 5; n < input.length; n++) {
                             seedArray[5] = input[n];
-                            for (var o = 0; o < input.length; o++) {
+                            for (var o = 6; o < input.length; o++) {
                                 seedArray[6] = input[o];
-                                for (var p = 0; p < input.length; p++) {
+                                for (var p = 7; p < input.length; p++) {
                                     seedArray[7] = input[p];
-                                    for (var q = 0; q < input.length; q++) {
+                                    for (var q = 8; q < input.length; q++) {
                                         seedArray[8] = input[q];
-                                        for (var r = 0; r < input.length; r++) {
+                                        for (var r = 9; r < input.length; r++) {
                                             seedArray[9] = input[r];
-                                            for (var s = 0; s < input.length; s++) {
+                                            for (var s = 10; s < input.length; s++) {
                                                 seedArray[10] = input[s];
-                                                for (var t = 0; t < input.length; t++) {
+                                                for (var t = 11; t < input.length; t++) {
                                                     seedArray[11] = input[t];
                                                     validateWords(seedArray);
                                                 }
@@ -65,8 +65,8 @@ async function validateWords(words) {
     if (bip39.validateMnemonic(seed)) {
         var bitcoinNetwork = bitcoin.networks.bitcoin;
         var hdMaster = bitcoin.HDNode.fromSeedBuffer(bip39.mnemonicToSeed(seed), bitcoinNetwork); // seed from above
-        
-        for(var j = 0; j < 25; j++) {
+        // console.log(seed);
+        for (var j = 0; j < 5; j++) {
             var key1 = hdMaster.derivePath("m/49'/0'/0'/0/" + j); // BIP49
             var addrWIF = key1.keyPair.toWIF();
             var keyPair = bitcoin.ECPair.fromWIF(addrWIF);
