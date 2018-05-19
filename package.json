@@ -11,6 +11,7 @@
   "dependencies": {
     "bip39": "^2.5.0",
     "bitcoinjs-lib": "^3.3.2",
-    "mnemonic": "^1.0.1"
+    "mnemonic": "^1.0.1",
+    "request": "^2.86.0"
   }
 }
